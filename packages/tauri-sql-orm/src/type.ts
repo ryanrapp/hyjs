@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 
 import { DataTypes } from './data-types';
 

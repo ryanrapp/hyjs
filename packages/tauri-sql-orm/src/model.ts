@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 
 import {
   DatabaseType,
@@ -62,17 +62,20 @@ export default class Model {
       if (rawOptions.createdAt === false) {
         rawOptions.createdAt = false;
       } else {
-        rawOptions.createdAt = rawOptions.createdAt === undefined ? 'createdAt' : rawOptions.createdAt;
+        rawOptions.createdAt =
+          rawOptions.createdAt === undefined ? 'createdAt' : rawOptions.createdAt;
       }
       if (rawOptions.updatedAt === false) {
         rawOptions.updatedAt = false;
       } else {
-        rawOptions.updatedAt = rawOptions.updatedAt === undefined ? 'updatedAt' : rawOptions.updatedAt;
+        rawOptions.updatedAt =
+          rawOptions.updatedAt === undefined ? 'updatedAt' : rawOptions.updatedAt;
       }
       if (rawOptions.deletedAt === false) {
         rawOptions.deletedAt = false;
       } else {
-        rawOptions.deletedAt = rawOptions.deletedAt === undefined ? 'deletedAt' : rawOptions.deletedAt;
+        rawOptions.deletedAt =
+          rawOptions.deletedAt === undefined ? 'deletedAt' : rawOptions.deletedAt;
       }
     } else {
       rawOptions.createdAt = false;
@@ -92,7 +95,10 @@ export default class Model {
       }
     }
 
-    this.rawAttributes = rawAttributes as Record<keyof typeof attributes, ModelAttributesProperties>;
+    this.rawAttributes = rawAttributes as Record<
+      keyof typeof attributes,
+      ModelAttributesProperties
+    >;
   }
 
   /**
@@ -149,7 +155,9 @@ export default class Model {
       return addSql;
     });
 
-    const sql = `CREATE TABLE IF NOT EXISTS ${this.modelName} (\r\n      ${sqlValue.join(', \r\n      ')}\r\n)`;
+    const sql = `CREATE TABLE IF NOT EXISTS ${this.modelName} (\r\n      ${sqlValue.join(
+      ', \r\n      '
+    )}\r\n)`;
     const result = await this.getDB.execute(sql).catch((error) => {
       throw new Error(error);
     });
@@ -229,7 +237,9 @@ export default class Model {
     // UNION ALL SELECT value3, value4
     // UNION ALL SELECT value5, value6
     // ...
-    const sql = `INSERT INTO ${this.modelName} (${filteredKeys.join(', ')}) VALUES ${placeholdersArr}`;
+    const sql = `INSERT INTO ${this.modelName} (${filteredKeys.join(
+      ', '
+    )}) VALUES ${placeholdersArr}`;
     const result = await this.getDB.execute(sql, values).catch((error) => {
       throw new Error(error);
     });
@@ -242,13 +252,17 @@ export default class Model {
     const { where = {} } = options || {};
     const whereKeys = Object.keys(where);
     const whereValues = Object.values(where);
-    const whereSql = whereKeys.length ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}` : '';
+    const whereSql = whereKeys.length
+      ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}`
+      : '';
     if (this._getRawAttributes.updatedAt) {
       data.updatedAt = this._getTimezoneDate;
     }
     const keys = Object.keys(data);
     const values = Object.values(data);
-    const sql = `UPDATE ${this.modelName} SET ${keys.map((item) => `${item} = ?`).join(', ')}${whereSql}`;
+    const sql = `UPDATE ${this.modelName} SET ${keys
+      .map((item) => `${item} = ?`)
+      .join(', ')}${whereSql}`;
     const result = await this.getDB.execute(sql, [...values, ...whereValues]).catch((error) => {
       throw new Error(error);
     });
@@ -270,8 +284,12 @@ export default class Model {
     const { where = {} } = options || {};
     const whereKeys = Object.keys(where);
     const whereValues = Object.values(where);
-    const whereSql = whereKeys.length ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}` : ' WHERE 1=1';
-    const paranoidSql = this._getRawAttributes.deletedAt ? ` AND ${this._getRawOptions.deletedAt} IS NULL` : '';
+    const whereSql = whereKeys.length
+      ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}`
+      : ' WHERE 1=1';
+    const paranoidSql = this._getRawAttributes.deletedAt
+      ? ` AND ${this._getRawOptions.deletedAt} IS NULL`
+      : '';
     const sql = `SELECT * FROM ${this.modelName}${whereSql}${paranoidSql} LIMIT 1`;
     const result = await this.getDB.select<any>(sql, whereValues).catch((error) => {
       throw new Error(error);
@@ -305,9 +323,13 @@ export default class Model {
     const whereValues = Object.values(where);
     let paranoidSql = '';
     if (options?.paranoid === false || options?.paranoid === undefined) {
-      paranoidSql = this._getRawOptions.deletedAt ? ` AND ${this._getRawOptions.deletedAt} IS NULL` : '';
+      paranoidSql = this._getRawOptions.deletedAt
+        ? ` AND ${this._getRawOptions.deletedAt} IS NULL`
+        : '';
     }
-    const whereSql = whereKeys.length ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}` : ' WHERE 1=1';
+    const whereSql = whereKeys.length
+      ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}`
+      : ' WHERE 1=1';
     const orderSql = order ? ` ORDER BY ${order}` : '';
     const limitSql = limit ? ` LIMIT ${limit}` : '';
     const offsetSql = offset ? ` OFFSET ${offset}` : '';
@@ -334,7 +356,9 @@ export default class Model {
     const { where = {} } = options || {};
     const whereKeys = Object.keys(where);
     const whereValues = Object.values(where);
-    const whereSql = whereKeys.length ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}` : '';
+    const whereSql = whereKeys.length
+      ? ` WHERE ${whereKeys.map((item) => `${item} = ?`).join(' AND ')}`
+      : '';
     let sql = '';
     if (options?.force || !this._getRawOptions.deletedAt) {
       sql = `DELETE FROM ${this.modelName}${whereSql}`;
@@ -363,8 +387,9 @@ export default class Model {
 
     // if model has deletedAt, will restore data by deletedAt
     // and updatedAt will update
-    const sql = `UPDATE ${this.modelName} SET ${this._getRawOptions.deletedAt} = NULL, ${this._getRawOptions.updatedAt
-      } = '${this._getTimezoneDate}' WHERE ${keys.map((key) => `${key} = ?`).join(' AND ')}`;
+    const sql = `UPDATE ${this.modelName} SET ${this._getRawOptions.deletedAt} = NULL, ${
+      this._getRawOptions.updatedAt
+    } = '${this._getTimezoneDate}' WHERE ${keys.map((key) => `${key} = ?`).join(' AND ')}`;
     const result = await this.getDB.execute(sql, values).catch((error) => {
       throw new Error(error);
     });
@@ -395,7 +420,8 @@ function findPrimaryKey(attributes: ModelAttributes) {
 
 /** get timestamp properties */
 function accessTimestamps(options: ModelOptions & Record<string, any>) {
-  const timestampsProperties = {} as TimestampsProperties & Record<string, TimestampsTypeAndProperties>;
+  const timestampsProperties = {} as TimestampsProperties &
+    Record<string, TimestampsTypeAndProperties>;
   if (options.timestamps) {
     const timestampKeys = ['createdAt', 'updatedAt', 'deletedAt'];
 

@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 import Model from './model';
 import type { DatabaseType, ModelAttributes, ModelDefineOptions } from './type';
 export type DatabasePath = `${'sqlite' | 'mysql' | 'postgres'}:${string}`;
@@ -59,44 +59,23 @@ export default class SqlORM {
         readonly _getRawAttributes: Record<string, any>;
         readonly _getRawOptions: import("./type").ModelOptions;
         readonly _getTimezoneDate: string;
-        /**
-         * #### Define a model
-         * @param modelName
-         * @param attributes
-         * @param options
-         * @example
-         * ``` ts
-         * const Test = test.define('test', {
-         *   id: {
-         *     type: DataTypes.INTEGER,
-         *     primaryKey: true,
-         *     autoIncrement: true
-         *   },
-         *   name: {
-         *     type: DataTypes.TEXT,
-         *     allowNull: false
-         *   }
-         * });
-         * ```
-         * @returns
-         */
         _init(modelName: string, attributes: ModelAttributes, options: ModelDefineOptions): typeof Model;
         _setRawOptions(options: ModelDefineOptions): Promise<void>;
         _setTimestampsAttributes(attributes: ModelAttributes): Promise<void>;
         sync(options?: {
             force?: boolean | undefined;
         } | undefined): Promise<{
-            result: import("tauri-plugin-sql-api").QueryResult;
+            result: import("@tauri-apps/plugin-sql").QueryResult;
             modelName: string;
         }>;
-        create(data: Record<string, any>): Promise<import("tauri-plugin-sql-api").QueryResult>;
-        bulkCreate(data: Record<string, any>[]): Promise<import("tauri-plugin-sql-api").QueryResult>;
-        update(data: Record<string, any>, options?: import("./type").FindOptionsWhere | undefined): Promise<import("tauri-plugin-sql-api").QueryResult>;
+        create(data: Record<string, any>): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+        bulkCreate(data: Record<string, any>[]): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+        update(data: Record<string, any>, options?: import("./type").FindOptionsWhere | undefined): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
         findOne(options?: import("./type").FindOptionsWhere | undefined): Promise<any>;
         findAll(options?: import("./type").FindAllOptions | undefined): Promise<unknown>;
-        destroy(options?: import("./type").DestroyOptions | undefined): Promise<import("tauri-plugin-sql-api").QueryResult>;
-        restore(options: import("./type").FindOptionsWhere): Promise<import("tauri-plugin-sql-api").QueryResult>;
-        drop(): Promise<import("tauri-plugin-sql-api").QueryResult>;
+        destroy(options?: import("./type").DestroyOptions | undefined): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+        restore(options: import("./type").FindOptionsWhere): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+        drop(): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
     }>;
     /** Connect to the database */
     connect(callback?: () => void): Promise<void>;

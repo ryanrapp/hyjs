@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 import { DatabaseType, DestroyOptions, FindAllOptions, FindOptionsWhere, ModelAttributes, ModelDefineOptions, ModelOptions, RestoreOptions } from './type';
 export default class Model {
     static db: SqlDatabase;
@@ -34,7 +34,7 @@ export default class Model {
     static sync(options?: {
         force?: boolean;
     }): Promise<{
-        result: import("tauri-plugin-sql-api").QueryResult;
+        result: import("@tauri-apps/plugin-sql").QueryResult;
         modelName: string;
     }>;
     /**
@@ -47,7 +47,7 @@ export default class Model {
      * test.create({ name: 'test' });
      * ```
      */
-    static create(data: Record<string, any>): Promise<import("tauri-plugin-sql-api").QueryResult>;
+    static create(data: Record<string, any>): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
     /**
      * bulk create data to table
      * @param data
@@ -58,8 +58,8 @@ export default class Model {
      * test.bulkCreate([{ name: 'test' }, { name: 'test2' }]);
      * ```
      */
-    static bulkCreate(data: Record<string, any>[]): Promise<import("tauri-plugin-sql-api").QueryResult>;
-    static update(data: Record<string, any>, options?: FindOptionsWhere): Promise<import("tauri-plugin-sql-api").QueryResult>;
+    static bulkCreate(data: Record<string, any>[]): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static update(data: Record<string, any>, options?: FindOptionsWhere): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
     /**
      * find one data to table
      * @param options
@@ -100,12 +100,12 @@ export default class Model {
      * test.destroy({ where: { id: 1 } });
      * ```
      */
-    static destroy(options?: DestroyOptions): Promise<import("tauri-plugin-sql-api").QueryResult>;
+    static destroy(options?: DestroyOptions): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
     /** if model has deletedAt, will restore data */
-    static restore(options: RestoreOptions): Promise<import("tauri-plugin-sql-api").QueryResult>;
+    static restore(options: RestoreOptions): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
     /**
      * drop table
      * @returns
      */
-    static drop(): Promise<import("tauri-plugin-sql-api").QueryResult>;
+    static drop(): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
 }

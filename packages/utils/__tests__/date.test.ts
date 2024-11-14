@@ -30,4 +30,4 @@ describe('dateFormatter', () => {
   });
 });
 
-const formatNumber = (n) => String((n < 10 ? '0' + n : n));
+const formatNumber = (n) => String(n < 10 ? '0' + n : n);

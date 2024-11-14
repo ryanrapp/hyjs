@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 import { DataTypes } from './data-types';
 export type DatabaseType = 'sqlite' | 'mysql' | 'postgres';
 export interface ModelAttributesProperties {

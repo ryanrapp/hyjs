@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var SqlDatabase = require('tauri-plugin-sql-api');
+var SqlDatabase = require('@tauri-apps/plugin-sql');
 
 var DataTypes = /** @class */ (function () {
     function DataTypes() {

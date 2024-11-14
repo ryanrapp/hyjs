@@ -1,4 +1,4 @@
-import SqlDatabase from 'tauri-plugin-sql-api';
+import SqlDatabase from '@tauri-apps/plugin-sql';
 
 import Model from './model';
 import type { DatabaseType, ModelAttributes, ModelDefineOptions } from './type';

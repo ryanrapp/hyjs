@@ -1,4 +1,4 @@
-import SqlDatabase from '@tauri-apps/plugin-sql';
+import SqlDatabase, { QueryResult } from '@tauri-apps/plugin-sql';
 import { DatabaseType, DestroyOptions, FindAllOptions, FindOptionsWhere, ModelAttributes, ModelDefineOptions, ModelOptions, RestoreOptions } from './type';
 export default class Model {
     static db: SqlDatabase;
@@ -34,7 +34,7 @@ export default class Model {
     static sync(options?: {
         force?: boolean;
     }): Promise<{
-        result: import("@tauri-apps/plugin-sql").QueryResult;
+        result: QueryResult;
         modelName: string;
     }>;
     /**
@@ -47,7 +47,7 @@ export default class Model {
      * test.create({ name: 'test' });
      * ```
      */
-    static create(data: Record<string, any>): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static create(data: Record<string, any>): Promise<QueryResult>;
     /**
      * bulk create data to table
      * @param data
@@ -58,8 +58,19 @@ export default class Model {
      * test.bulkCreate([{ name: 'test' }, { name: 'test2' }]);
      * ```
      */
-    static bulkCreate(data: Record<string, any>[]): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
-    static update(data: Record<string, any>, options?: FindOptionsWhere): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static bulkCreate(data: Record<string, any>[]): Promise<QueryResult>;
+    /**
+     * Bulk upsert records into the table.
+     *
+     * This method builds an INSERT statement using the columns defined in the model's
+     * rawAttributes (excluding autoIncrement columns) and appends an ON CONFLICT clause.
+     * The conflict target is the primary key(s) and on conflict, non-primary key columns are updated.
+     *
+     * @param data Array of record objects to upsert.
+     * @returns The QueryResult from executing the upsert.
+     */
+    static bulkUpsert(data: Record<string, any>[]): Promise<QueryResult>;
+    static update(data: Record<string, any>, options?: FindOptionsWhere): Promise<QueryResult>;
     /**
      * find one data to table
      * @param options
@@ -100,12 +111,12 @@ export default class Model {
      * test.destroy({ where: { id: 1 } });
      * ```
      */
-    static destroy(options?: DestroyOptions): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static destroy(options?: DestroyOptions): Promise<QueryResult>;
     /** if model has deletedAt, will restore data */
-    static restore(options: RestoreOptions): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static restore(options: RestoreOptions): Promise<QueryResult>;
     /**
      * drop table
      * @returns
      */
-    static drop(): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+    static drop(): Promise<QueryResult>;
 }

@@ -1,6 +1,6 @@
 {
   "name": "tauri-sql-orm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "tauri-plugin-sql-api's ORM encapsulation provides a convenient and versatile way for developers to interact with SQL databases in their Tauri applications.",
   "type": "module",
   "keywords": [

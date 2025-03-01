@@ -418,6 +418,82 @@ var Model = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Bulk upsert records into the table.
+     *
+     * This method builds an INSERT statement using the columns defined in the model's
+     * rawAttributes (excluding autoIncrement columns) and appends an ON CONFLICT clause.
+     * The conflict target is the primary key(s) and on conflict, non-primary key columns are updated.
+     *
+     * @param data Array of record objects to upsert.
+     * @returns The QueryResult from executing the upsert.
+     */
+    Model.bulkUpsert = function (data) {
+        return __awaiter$1(this, void 0, void 0, function () {
+            var keys, filteredKeys, values, placeholders, placeholdersArr, primaryKeys, updateColumns, updateClause, sql, result;
+            var _this = this;
+            return __generator$1(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!data)
+                            throw new Error('Data is undefined.');
+                        keys = Object.keys(this._getRawAttributes);
+                        filteredKeys = keys.filter(function (key) { return !_this._getRawAttributes[key].autoIncrement; });
+                        values = data
+                            .map(function (record) {
+                            var e_3, _a;
+                            var createValue = [];
+                            try {
+                                for (var filteredKeys_1 = __values(filteredKeys), filteredKeys_1_1 = filteredKeys_1.next(); !filteredKeys_1_1.done; filteredKeys_1_1 = filteredKeys_1.next()) {
+                                    var key = filteredKeys_1_1.value;
+                                    if (record[key] === undefined) {
+                                        // If a defaultValue is defined, use it.
+                                        if (_this._getRawAttributes[key].defaultValue !== undefined) {
+                                            createValue.push(_this._getRawAttributes[key].defaultValue);
+                                            record[key] = _this._getRawAttributes[key].defaultValue;
+                                        }
+                                        else if (_this._getRawAttributes[key].allowNull === false) {
+                                            throw new Error("Column ".concat(key, " is not allowed to be null."));
+                                        }
+                                        else {
+                                            createValue.push(null);
+                                            record[key] = null;
+                                        }
+                                    }
+                                    else {
+                                        createValue.push(record[key]);
+                                    }
+                                }
+                            }
+                            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                            finally {
+                                try {
+                                    if (filteredKeys_1_1 && !filteredKeys_1_1.done && (_a = filteredKeys_1.return)) _a.call(filteredKeys_1);
+                                }
+                                finally { if (e_3) throw e_3.error; }
+                            }
+                            return createValue;
+                        })
+                            .flat();
+                        placeholders = Array(filteredKeys.length).fill('?').join(', ');
+                        placeholdersArr = Array(data.length).fill("(".concat(placeholders, ")")).join(', ');
+                        primaryKeys = keys.filter(function (key) { return _this._getRawAttributes[key].primaryKey; });
+                        if (primaryKeys.length === 0) {
+                            throw new Error('No primary key defined for bulk upsert operation.');
+                        }
+                        updateColumns = filteredKeys.filter(function (col) { return !_this._getRawAttributes[col].primaryKey; });
+                        updateClause = updateColumns.map(function (col) { return "".concat(col, "=excluded.").concat(col); }).join(', ');
+                        sql = "INSERT INTO ".concat(this.modelName, " (").concat(filteredKeys.join(', '), ")\nVALUES ").concat(placeholdersArr, "\nON CONFLICT (").concat(primaryKeys.join(', '), ")\nDO UPDATE SET ").concat(updateClause, ";");
+                        return [4 /*yield*/, this.getDB.execute(sql, values).catch(function (error) {
+                                throw new Error(error);
+                            })];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                }
+            });
+        });
+    };
     Model.update = function (data, options) {
         return __awaiter$1(this, void 0, void 0, function () {
             var _a, where, whereKeys, whereValues, whereSql, keys, values, sql, result;
@@ -625,7 +701,7 @@ var Model = /** @class */ (function () {
 }());
 /** find primary key */
 function findPrimaryKey(attributes) {
-    var e_3, _a;
+    var e_4, _a;
     if (!attributes)
         throw new Error('attributes is required');
     var keys = Object.keys(attributes);
@@ -636,17 +712,17 @@ function findPrimaryKey(attributes) {
                 return key;
         }
     }
-    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
     finally {
         try {
             if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
         }
-        finally { if (e_3) throw e_3.error; }
+        finally { if (e_4) throw e_4.error; }
     }
 }
 /** get timestamp properties */
 function accessTimestamps(options) {
-    var e_4, _a;
+    var e_5, _a;
     var timestampsProperties = {};
     if (options.timestamps) {
         var timestampKeys = ['createdAt', 'updatedAt', 'deletedAt'];
@@ -666,12 +742,12 @@ function accessTimestamps(options) {
                 };
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (timestampKeys_1_1 && !timestampKeys_1_1.done && (_a = timestampKeys_1.return)) _a.call(timestampKeys_1);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_5) throw e_5.error; }
         }
     }
     return timestampsProperties;

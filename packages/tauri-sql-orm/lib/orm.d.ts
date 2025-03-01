@@ -70,6 +70,7 @@ export default class SqlORM {
         }>;
         create(data: Record<string, any>): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
         bulkCreate(data: Record<string, any>[]): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
+        bulkUpsert(data: Record<string, any>[]): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
         update(data: Record<string, any>, options?: import("./type").FindOptionsWhere | undefined): Promise<import("@tauri-apps/plugin-sql").QueryResult>;
         findOne(options?: import("./type").FindOptionsWhere | undefined): Promise<any>;
         findAll(options?: import("./type").FindAllOptions | undefined): Promise<unknown>;
